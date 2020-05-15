@@ -10,25 +10,30 @@ window= pyglet.window.Window(fullscreen=False, width = 1280, height = 720+64, fi
 
 fps_display = FPSDisplay(window)
 player = pyglet.media.Player()
-
+sameState = False
 
 
 @window.event
 def on_draw():
-
     if player.source and player.source.video_format:
         player.get_texture().blit(0,64, height = 720, width = 1280)
         fps_display.draw()
+        if(pauseToggle.is_checked and not player.playing):
+            player.play()
+        elif(not pauseToggle.is_checked and player.playing):
+            player.pause()
+
     elif(gui.__contains__(hbox)):
         gui.remove(hbox)
         gui.add(label)
 
 @window.event
-def on_file_drop(x, y, path):    
+def on_file_drop(x, y, path):
     filename = path[0]
     src = pyglet.media.load(filename, decoder = pyglet.media.codecs.ffmpeg.FFmpegDecoder())
     player.queue(src)
     player.play()
+    player.pause()
     gui.remove(label)
     gui.add(hbox)
 
